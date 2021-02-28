@@ -63,10 +63,18 @@ tensorflow/serving &
 
 Create an ```app``` folder and ensure the file structure you are using matches the example below:
 
-<br/>
-<p align="center">
-  <img src="images/screenshot-01.png" width="400px" alt="folder structure"/>
-</p>
+```
+|-- app
+|-- Dockerfile
+|-- models
+    |-- cartoons-photos
+    |-- 1
+        |-- assets
+        |-- saved_model.pb
+        |-- variables
+            |-- variables.data-00000-of-00001
+            |-- variables.index
+```
 
 Run the following docker commands inside the terminal:
 
