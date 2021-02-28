@@ -1,8 +1,16 @@
-# Cartoon-Photo Classifier: TensorFlow-Serving Deployment
+# Cartoon-Photo Classifier: TensorFlow Serving Deployment
+
+TensorFlow Serving acts as a simple “wrapper” for models that provides an API surface as well as production-level scalability. It provides the infrastructure for hosting a model on a server. Clients can then use HTTP to pass requests to the server along with a data payload. The data will be passed to the model, which will run inference, get the results, and return them to the client. There are several methods by which you can install TensorFlow Serving. This example uses Docker.
+
+The model used in this example is the simpler, more lightweight cartoons-photos ```.h5``` model generated [here](https://github.com/Carla-de-Beer/cartoon-photo-classifier/tree/main/classifier).
 
 
 ## Deployment Steps
-### Convert the .h5 model to a .pb model
+### Convert the ```.h5``` model to a ```.pb``` model
+
+TensorFlow Serving operates only with ```.pb``` models. This allows versioning of the models to be used by the clients. Because the latest version is always used, it prevents "model drift", where different clients have different versions of the same model. This allows allows for the possibility of some clients being issued with a different model version.
+
+Start by converting the existing ```.h5``` model to a ```.pb``` model:
 
 ```
 import tensorflow as tf
@@ -23,9 +31,19 @@ pre_trained_model.save(export_path, save_format="tf")
 
 ### Run the Docker Container
 
+Use docker pull to get the TensorFlow Serving package:
+
+```
+docker pull tensorflow/serving
+```
+
+Set up a variable called ```TESTDATA``` that contains the path of the sample model:
+
 ```
 TESTDATA="$(pwd)/testdata"
 ```
+
+Run TensorFlow Serving from the Docker image:
 
 ```
 docker run -t --rm -p 8501:8501 \
@@ -34,13 +52,13 @@ docker run -t --rm -p 8501:8501 \
 tensorflow/serving &
 ```
 
-The model can be reached at the following API URL:
+This will instantiate a server on port 8501 and the model can then be accessed at:
 
 ```
 http://localhost:8501/v1/models/cartoons-photos
 ```
 
-and should return something like this:
+The ```GET``` response to this call should return something like this:
 
 ```
 {
@@ -57,7 +75,7 @@ and should return something like this:
 }
 ```
 
-We now need to make a POST call in order to receive a prediction.
+A ```POST``` call can then be used in order to make a request and receive a prediction.
 
 ### Call the API URL
 ```
@@ -87,7 +105,7 @@ The result of this call is
 {'predictions': [[0.675242066]]}
 ```
 
-Cartoons are classified as being close to 0, and photos as close to 1. In this case the model predicted the input image, we know to be a photo, with 67.542% certainty as being a photo.
+Cartoons are expected to return a result close to 0, and photos close to 1. In this case the model predicted the input image, we know to be a photo, as a photo with 67.542% certainty.
 
 <br/>
 <p align="center">
@@ -95,13 +113,13 @@ Cartoons are classified as being close to 0, and photos as close to 1. In this c
   <figcaption>Fig.1: <code>img-04.jpg</code></figcaption>
 </p>
 
-When the request is made again using the unseen image "img-05.jpg", result of this call is
+When the request is made again using the unseen image ```img-05.jpg```, the result of this call is
 
 ```
 {'predictions': [[7.35907233e-05]]}
 ```
 
-In this case the classifier predicted that the input image is a cartoon with a certainty of (1 - 7.35907233e-05) * 100% = 99.993%. We know that this image is a cartoon and that the prediction is quite accurate. Pretty good.
+In this case the classifier predicted that the input image is a cartoon with a certainty of (1 - 7.35907233e-05) * 100% = 99.993%. We know that this image is a cartoon and that the prediction is quite accurate.
 
 <br/>
 <p align="center">
