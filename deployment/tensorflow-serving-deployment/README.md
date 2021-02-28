@@ -10,7 +10,7 @@ The model used in this example is the simpler, more lightweight cartoons-photos 
 
 TensorFlow Serving operates only with ```.pb``` models. This allows versioning of the models to be used by the clients. Because the latest version is always used, it prevents "model drift", where different clients have different versions of the same model. This allows for the possibility of some clients being issued with a different model version.
 
-Create a folder called ```modeldata``` to work within.
+Create a folder called ```models``` to work within.
 
 Start by converting the existing ```.h5``` model to a ```.pb``` model:
 
@@ -32,8 +32,11 @@ pre_trained_model.save(export_path, save_format="tf")
 ```
 
 ### Run the Docker Container
+There are two options here, either run the docker commands via the command line, or use the Dockerfile provided.
 
-Use docker pull to get the TensorFlow Serving package:
+#### Option 1: Command Line Instructions
+
+Use ```docker pull``` to get the TensorFlow Serving package:
 
 ```
 docker pull tensorflow/serving
@@ -42,8 +45,10 @@ docker pull tensorflow/serving
 Set up a variable called ```MODELDATA``` that contains the path of the sample model:
 
 ```
-MODELDATA="$(pwd)/modeldata"
+MODELDATA="$(pwd)/models"
 ```
+
+where ```model``` is the folder containing the ```.pd``` model.
 
 Run TensorFlow Serving from the Docker image:
 
@@ -54,13 +59,32 @@ docker run -t --rm -p 8501:8501 \
 tensorflow/serving &
 ```
 
-This will instantiate a server on port 8501 and the model can then be accessed at:
+#### Option 2: Dockerfile
+
+Create an ```app``` folder and ensure the file structure you are using matches the example below:
+
+<br/>
+<p align="center">
+  <img src="images/screenshot-01.png" width="400px" alt="folder structure"/>
+</p>
+
+Run the following docker commands inside the terminal:
+
+```
+docker build -t tf-serving-cartoons-photos-classifier .
+```
+```
+docker run -p 8501:8501 tf-serving-cartoons-photos-classifier
+```
+
+After following either Option 1 or Option 2, the result will be the instantiation of
+a server on port 8501 and the model can then be accessed at:
 
 ```
 http://localhost:8501/v1/models/cartoons-photos
 ```
 
-The ```GET``` response to this call should return something like this:
+A ```GET``` request to this call should return something like this:
 
 ```
 {
@@ -77,9 +101,9 @@ The ```GET``` response to this call should return something like this:
 }
 ```
 
-A ```POST``` call can then be used in order to make a request and receive a prediction.
+A ```POST``` call can then be used to query the API in order to make a request and receive a prediction.
 
-### Call the API URL
+### Call the API
 ```
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
 import requests
@@ -111,7 +135,7 @@ Cartoons are expected to return a result close to 0, and photos close to 1. In t
 
 <br/>
 <p align="center">
-  <img src="unseen/img-04.jpg" width="400px" alt="joinplot_cartoons"/>
+  <img src="unseen/img-04.jpg" width="400px" alt="img-04.jpg"/>
   <figcaption>Fig.1: <code>img-04.jpg</code></figcaption>
 </p>
 
@@ -125,6 +149,6 @@ In this case the classifier predicted that the input image is a cartoon with a c
 
 <br/>
 <p align="center">
-  <img src="unseen/img-05.jpg" width="400px" alt="joinplot_cartoons"/>
+  <img src="unseen/img-05.jpg" width="400px" alt="img-05.jpg"/>
   <figcaption>Fig.2: <code>img-05.jpg</code></figcaption>
 </p>
