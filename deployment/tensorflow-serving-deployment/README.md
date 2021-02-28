@@ -61,10 +61,9 @@ tensorflow/serving &
 
 #### Option 2: Dockerfile
 
-Create an ```app``` folder and ensure the file structure you are using matches the example below (using the Dockerfile provided):
+Using the Dockerfile provided, ensure that the file structure you are using matches the example below:
 
 ```
-|-- app
 |-- Dockerfile
 |-- models
     |-- cartoons-photos
@@ -111,7 +110,7 @@ A ```GET``` request to this call should return something like this:
 
 A ```POST``` call can then be used to query the API in order to make a request and receive a prediction.
 
-### Call the API
+### Query the API
 ```
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
 import requests
