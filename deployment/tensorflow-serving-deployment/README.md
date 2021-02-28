@@ -61,7 +61,7 @@ tensorflow/serving &
 
 #### Option 2: Dockerfile
 
-Create an ```app``` folder and ensure the file structure you are using matches the example below:
+Create an ```app``` folder and ensure the file structure you are using matches the example below (using the Dockerfile from the folder ```docker-example```):
 
 ```
 |-- app
