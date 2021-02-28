@@ -1,16 +1,16 @@
 # Cartoon-Photo Classifier: TensorFlow Serving Deployment
 
-TensorFlow Serving acts as a "wrapper" for models by providing an API by which to query the model directly. It also provides the infrastructure for hosting a model on a server to allow for production-level scalability. Clients can use HTTP to pass requests to the server along with a data payload. The data is then passed to the model, which will run the inference, get the results, and return them to the client. There are several methods by which TensorFlow Serving can be installed. This example uses Docker.
+TensorFlow Serving acts as a "wrapper" for models by providing an API by which to query models directly. It also provides the infrastructure for hosting a model on a server to allow for production-level scalability. Clients can use HTTP to pass requests to the server along with a data payload. The data is then passed to the model, which will run the inference, get the results, and return them to the client. There are several methods by which TensorFlow Serving can be installed. This example uses Docker.
 
 The model used in this example is the simpler, more lightweight cartoons-photos ```.h5``` model generated [here](https://github.com/Carla-de-Beer/cartoon-photo-classifier/tree/main/classifier).
 
 
 ## Deployment Steps
-### Convert the ```.h5``` model to a ```.pb``` model
+### Convert the HDF5 binary data format ```.h5``` model to a protobuf ```.pb``` model
 
-TensorFlow Serving operates only with ```.pb``` models. This allows versioning of the models to be used by the clients. Because the latest version is always used, it prevents "model drift", where different clients have different versions of the same model. This allows for the possibility of some clients being issued with a different model version.
+TensorFlow Serving operates only with ```.pb``` models. This allows versioning of the models to be used by the clients. Because the latest model version is always used, "model drift", where different clients have different versions of the same model, is prevented. Versioning also allows for the possibility of some clients being issued with a different model version.
 
-Create a folder called ```models``` to work within.
+Create a folder called ```models```, for example, to work within.
 
 Start by converting the existing ```.h5``` model to a ```.pb``` model:
 
@@ -36,6 +36,19 @@ There are two options here, either run the docker commands via the command line,
 
 #### Option 1: Command Line Instructions
 
+Your file structure should look like this:
+
+```
+|-- models
+    |-- cartoons-photos
+    |-- 1
+        |-- assets
+        |-- saved_model.pb
+        |-- variables
+            |-- variables.data-00000-of-00001
+            |-- variables.index
+```
+
 Use ```docker pull``` to get the TensorFlow Serving package:
 
 ```
@@ -48,7 +61,7 @@ Set up a variable called ```MODELDATA``` that contains the path of the sample mo
 MODELDATA="$(pwd)/models"
 ```
 
-where ```model``` is the folder containing the ```.pd``` model.
+where ```model``` is the folder containing the ```.pb``` model.
 
 Run TensorFlow Serving from the Docker image:
 
@@ -111,6 +124,9 @@ A ```GET``` request to this call should return something like this:
 A ```POST``` call can then be used to query the API in order to make a request and receive a prediction.
 
 ### Query the API
+
+Execute the following Python script:
+
 ```
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
 import requests
