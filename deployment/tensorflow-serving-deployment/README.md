@@ -10,6 +10,8 @@ The model used in this example is the simpler, more lightweight cartoons-photos 
 
 TensorFlow Serving operates only with ```.pb``` models. This allows versioning of the models to be used by the clients. Because the latest version is always used, it prevents "model drift", where different clients have different versions of the same model. This allows for the possibility of some clients being issued with a different model version.
 
+Create a folder called ```modeldata``` to work within.
+
 Start by converting the existing ```.h5``` model to a ```.pb``` model:
 
 ```
@@ -40,7 +42,7 @@ docker pull tensorflow/serving
 Set up a variable called ```MODELDATA``` that contains the path of the sample model:
 
 ```
-MODELDATA="$(pwd)/testdata"
+MODELDATA="$(pwd)/modeldata"
 ```
 
 Run TensorFlow Serving from the Docker image:
