@@ -1,6 +1,6 @@
 # Cartoon-Photo Classifier: TensorFlow Serving Deployment
 
-TensorFlow Serving acts as a simple “wrapper” for models that provides an API surface as well as production-level scalability. It provides the infrastructure for hosting a model on a server. Clients can then use HTTP to pass requests to the server along with a data payload. The data will be passed to the model, which will run inference, get the results, and return them to the client. There are several methods by which you can install TensorFlow Serving. This example uses Docker.
+TensorFlow Serving acts as a "wrapper" for models by providing an API by which to query the model directly. It also provides the infrastructure for hosting a model on a server to allow for production-level scalability. Clients can use HTTP to pass requests to the server along with a data payload. The data is then passed to the model, which will run the inference, get the results, and return them to the client. There are several methods by which TensorFlow Serving can be installed. This example uses Docker.
 
 The model used in this example is the simpler, more lightweight cartoons-photos ```.h5``` model generated [here](https://github.com/Carla-de-Beer/cartoon-photo-classifier/tree/main/classifier).
 
@@ -8,7 +8,7 @@ The model used in this example is the simpler, more lightweight cartoons-photos 
 ## Deployment Steps
 ### Convert the ```.h5``` model to a ```.pb``` model
 
-TensorFlow Serving operates only with ```.pb``` models. This allows versioning of the models to be used by the clients. Because the latest version is always used, it prevents "model drift", where different clients have different versions of the same model. This allows allows for the possibility of some clients being issued with a different model version.
+TensorFlow Serving operates only with ```.pb``` models. This allows versioning of the models to be used by the clients. Because the latest version is always used, it prevents "model drift", where different clients have different versions of the same model. This allows for the possibility of some clients being issued with a different model version.
 
 Start by converting the existing ```.h5``` model to a ```.pb``` model:
 
@@ -37,17 +37,17 @@ Use docker pull to get the TensorFlow Serving package:
 docker pull tensorflow/serving
 ```
 
-Set up a variable called ```TESTDATA``` that contains the path of the sample model:
+Set up a variable called ```MODELDATA``` that contains the path of the sample model:
 
 ```
-TESTDATA="$(pwd)/testdata"
+MODELDATA="$(pwd)/testdata"
 ```
 
 Run TensorFlow Serving from the Docker image:
 
 ```
 docker run -t --rm -p 8501:8501 \
--v "$TESTDATA/cartoons-photos:/models/cartoons-photos" \
+-v "$MODELDATA/cartoons-photos:/models/cartoons-photos" \
 -e MODEL_NAME=cartoons-photos \
 tensorflow/serving &
 ```

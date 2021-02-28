@@ -7,12 +7,6 @@ This repository contains the code for the generation and deployment of Tensorflo
   <img src="classifier/images/tensorboard-03.png" width="650px" alt="tensorboard-01"/>
 </p>
 
-<br/>
-<p align="center">
-  <img src="deployment/flask-app-deployment/cartoon-photo-classifier-web/images/screenshot-04.png" width="650px" alt="classifier-web"/>
-</p>
-
-
 # Topics
 
 * Convolutional neural networks
